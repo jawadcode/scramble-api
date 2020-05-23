@@ -27,5 +27,6 @@ The possible values of the puzzle parameter are:
 '5',
 '6' and
 '7'
+Note: The images returned are base-64 data-url pngs of the RUF and BLD faces
 ##### This project would have been impossible without @Owstin's scrambow and Conrad Rider's VisualCube
 ###### Made at 5am, I'm going to sleep now, bye 👋
