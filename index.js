@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const express = require('express');
 const Scrambow = require('scrambow').Scrambow;
 const fetch = require('node-fetch');
@@ -13,12 +14,12 @@ function fix_spaces(value, index, array) {
 
 // This function is also called in a for loop to generate images for the already generated scrambles.
 async function setImage(value, index, array, puzzleTypeCubePreview){
-	let RUFurl = 'http://cube.rider.biz/visualcube.php?fmt=png&size=350&bg=t&pzl=' + puzzleTypeCubePreview + '&alg=z2y2' + array[index].scramble_string.replace(/ /g,'');
+	let FRUurl = 'http://cube.rider.biz/visualcube.php?fmt=png&size=350&bg=t&pzl=' + puzzleTypeCubePreview + '&alg=z2y2' + array[index].scramble_string.replace(/ /g,'');
 	let BLDurl = 'http://cube.rider.biz/visualcube.php?fmt=png&size=350&bg=t&pzl=' + puzzleTypeCubePreview + '&alg=' + array[index].scramble_string.replace(/ /g,'');
 
 	const type = 'png';
 	return [
-		await fetch(RUFurl).then(r => r.buffer()).then(buf => 'data:image/' + type +';base64,' + buf.toString('base64')),
+		await fetch(FRUurl).then(r => r.buffer()).then(buf => 'data:image/' + type +';base64,' + buf.toString('base64')),
 		await fetch(BLDurl).then(r => r.buffer()).then(buf => 'data:image/' + type +';base64,' + buf.toString('base64'))
 	];
 }
@@ -82,9 +83,9 @@ app.get('/withimg/:puzzle/:n', async (req, res) => {
 		puzzleType === '666' ? '6':
 		puzzleType === '777' ? '7':
 		null;
-	const numOfPuzzles = parseInt(req.params.n);
-
-	if(puzzleType !== null && !isNaN(numOfPuzzles) && numOfPuzzles !== 0) {
+	let numOfPuzzles = parseInt(req.params.n);
+	numOfPuzzles = isNaN(numOfPuzzles) ? 1 : numOfPuzzles === 0 ? 1 : numOfPuzzles;
+	if(puzzleType !== null) {
 		if(puzzleTypeCubePreview !== null) {
 			let scrambleArray = scrambler.setType(puzzleType).get(numOfPuzzles);
 			for(let i = 0; i < scrambleArray.length; i++) {
@@ -93,7 +94,7 @@ app.get('/withimg/:puzzle/:n', async (req, res) => {
 			for(let i = 0; i < scrambleArray.length; i++) {
 				let imgs = await setImage(scrambleArray[i], i, scrambleArray, puzzleTypeCubePreview);
 				scrambleArray[i].scramble_images = {
-					RUFimage: imgs[0],
+					FRUimage: imgs[0],
 					BLDimage: imgs[1]
 				} 
 			}
